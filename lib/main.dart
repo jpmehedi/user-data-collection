@@ -1,7 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:test_me/screens/profile.dart';
+import 'package:test_me/screens/welcome/welcome.dart';
+Future<void> main() async{
 
-void main() {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ProfileScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }

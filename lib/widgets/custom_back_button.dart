@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:test_me/utils/app_color.dart';
 
 class CustomBackButton extends StatelessWidget {
+  final VoidCallback? onTap;
   const CustomBackButton({
-    Key? key,
+    Key? key, this.onTap
   }) : super(key: key);
 
   @override

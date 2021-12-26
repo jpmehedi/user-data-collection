@@ -3,7 +3,6 @@ import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_back_button.dart';
 import 'package:test_me/widgets/custom_button.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
-
 class LoginScreen extends StatelessWidget {
   const LoginScreen({ Key? key }) : super(key: key);
 
@@ -15,7 +14,11 @@ class LoginScreen extends StatelessWidget {
           elevation: 0,
           backgroundColor: AppColor.primaryColor,
           leadingWidth: 100,
-          leading: CustomBackButton(),
+          leading: CustomBackButton(
+            onTap: (){
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

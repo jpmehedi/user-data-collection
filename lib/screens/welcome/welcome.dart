@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:test_me/screens/welcome/login.dart';
+import 'package:test_me/screens/welcome/signup.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_button.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({ Key? key }) : super(key: key);
 
@@ -48,14 +50,20 @@ class WelcomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 43,),
               CustomButton(
-                onTap: (){},
+                onTap: (){
+                  Route route = MaterialPageRoute(builder: (context)=> LoginScreen());
+                  Navigator.push(context, route);
+                },
                 buttonLevel: "Login",
                 color: AppColor.secondaryColor,
                 levelColor: AppColor.primaryColor,
               ),
               SizedBox(height: 13,),
               CustomButton(
-                onTap: (){},
+                onTap: (){
+                  Route route = MaterialPageRoute(builder: (context)=> SignUpScreen());
+                  Navigator.push(context, route);
+                },
                 buttonLevel: "Sign up",
                 color: AppColor.primaryColor,
                 levelColor: AppColor.secondaryColor,

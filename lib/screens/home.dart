@@ -105,7 +105,45 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     trailing: ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        showDialog(
+                          context: context, 
+                          builder: (context)=> AlertDialog(
+                            title: Text(
+                              "Are you sure ?",
+                            ),
+                            content: Container(
+                              height: 188,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Divider(
+                                    thickness: 1,
+                                    color: AppColor.secondaryColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            actionsAlignment: MainAxisAlignment.spaceBetween,
+                            actions: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.grey
+                                ),
+                                onPressed: (){}, 
+                                child: Text("Cancel")
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.redAccent
+                                ),
+                                onPressed: (){}, 
+                                child: Text("Confirm")
+                              )
+                            ],
+                          )
+                        );
+                      },
                       child: Text(
                         'Remove',
                         style: TextStyle(

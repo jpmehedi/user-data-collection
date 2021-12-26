@@ -1,55 +1,33 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:test_me/screens/home.dart';
 import 'package:test_me/utils/app_color.dart';
-import 'package:test_me/widgets/custom_back_button.dart';
 import 'package:test_me/widgets/custom_button.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
 enum Gender { Male, Female }  
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({ Key? key }) : super(key: key);
+class AddUserScreen extends StatefulWidget {
+  const AddUserScreen({ Key? key }) : super(key: key);
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<AddUserScreen> createState() => _AddUserScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _AddUserScreenState extends State<AddUserScreen> {
   Gender? _gender = Gender.Male; 
-  bool isLoading = false;
-
-  Future signUp()async{
-    setState(() {
-      isLoading = true;
-    });
-    try{
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text
-      );
-      if(userCredential.user != null){
-        Route route = MaterialPageRoute(builder: (ctx)=> HomeScreen());
-        Navigator.push(context, route);
-      }
-    }catch(e){
-      print("Error: $e");
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
           backgroundColor: AppColor.primaryColor,
-          leadingWidth: 100,
-          leading: CustomBackButton(),
+          centerTitle: true,
+          title: Text(
+            "Add new user",
+            style: TextStyle(
+              fontSize: 18, 
+              fontWeight: FontWeight.w500,
+              color: AppColor.secondaryColor
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -58,14 +36,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Sign up",
-                  style: TextStyle(
-                    fontSize: 32, 
-                    fontWeight: FontWeight.w400,
-                    color: AppColor.secondaryColor
-                  ),
-                ),
                 Center(
                   child: Stack(
                     children: [
@@ -98,12 +68,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 12,),
                 CustomTextField(
-                  controller: emailController,
                   hintText: "Email",
                 ),
                SizedBox(height: 12,),
                 CustomTextField(
-                  controller: passwordController,
                   obscureText: true,
                   hintText: "Password",
                   suffixIcon: Icon(Icons.visibility),
@@ -170,39 +138,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 SizedBox(height: 32,),
-                isLoading ? CircularProgressIndicator() : CustomButton(
-                  onTap: (){
-                    signUp();
-                  },
+                 CustomButton(
+                  onTap: (){},
                   color: AppColor.secondaryColor,
                   levelColor: AppColor.primaryColor,
-                  buttonLevel: "Sign up",
+                  buttonLevel: "Save",
                 ),
                 SizedBox(height: 24,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                   Text(
-                      "Already have an account?",
-                      style: TextStyle(
-                        fontSize: 16, 
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.secondaryColor
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: (){}, 
-                      child:  Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 16, 
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.accentColor
-                      ),
-                    ),
-                    )
-                  ],
-                )
               ],
             ),
           ),
