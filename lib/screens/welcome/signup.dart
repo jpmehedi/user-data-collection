@@ -46,7 +46,7 @@ var imagePath;
 
  Future pickedImage()async{
    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
     if(image != null){
       setState(() {
         imagePath = File(image.path);
