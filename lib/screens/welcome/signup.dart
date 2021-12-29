@@ -1,5 +1,9 @@
+
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:test_me/screens/home.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_back_button.dart';
@@ -38,6 +42,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
+var imagePath;
+
+ Future pickedImage()async{
+   final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if(image != null){
+      setState(() {
+        imagePath = File(image.path);
+      });
+    }
+  }
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -69,16 +85,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Center(
                   child: Stack(
                     children: [
-                      CircleAvatar(
+                     imagePath != null ? CircleAvatar(
                         radius: 36,
-                        backgroundImage: AssetImage("assets/image/profile.jpg"),
+                        backgroundImage :  FileImage(imagePath) 
+                      ) : CircleAvatar(
+                        radius: 36,
+                        backgroundImage :  AssetImage("assets/image/profile.jpg")  
                       ),
                       Transform.translate(
                         offset: Offset(
                           -20, 45
                         ),
                         child: ElevatedButton(
-                           onPressed: () {},
+                           onPressed: () {
+                             pickedImage();
+                           },
                           child: Icon(
                             Icons.camera_alt,
                             color: Colors.white,
@@ -170,7 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
                 SizedBox(height: 32,),
-                isLoading ? CircularProgressIndicator() : CustomButton(
+                isLoading ? Center(child: CircularProgressIndicator()) : CustomButton(
                   onTap: (){
                     signUp();
                   },
