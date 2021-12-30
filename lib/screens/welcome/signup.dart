@@ -1,7 +1,9 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_me/screens/home.dart';
@@ -19,6 +21,13 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   Gender? _gender = Gender.Male; 
+  var imagePath;
+  var imageUrl;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+
   bool isLoading = false;
 
   Future signUp()async{
@@ -31,6 +40,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         password: passwordController.text
       );
       if(userCredential.user != null){
+        createProfile(
+          nameController.text,
+          emailController.text,
+          mobileController.text,
+          _gender!.index.toString(),
+          imageUrl.toString()
+        );
         Route route = MaterialPageRoute(builder: (ctx)=> HomeScreen());
         Navigator.push(context, route);
       }
@@ -42,20 +58,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-var imagePath;
 
- Future pickedImage()async{
-   final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
-    if(image != null){
-      setState(() {
-        imagePath = File(image.path);
-      });
+
+  Future pickedImage()async{
+    final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+      if(image != null){
+        setState(() {
+          imagePath = File(image.path);
+        });
+        uploadProfileImage();
+      }
     }
-  }
 
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+    Future uploadProfileImage() async {
+      String image = imagePath.toString();
+      var _image = image.split("/")[6];
+      
+      Reference reference = FirebaseStorage.instance.ref()
+          .child('profileImage/${_image}');
+      UploadTask uploadTask = reference.putFile(imagePath);
+
+      TaskSnapshot snapshot = await uploadTask;
+      imageUrl = await snapshot.ref.getDownloadURL();
+
+    }
+
+   Future createProfile(fullName, email, mobile, gender,profileImage )async{
+    
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    try{
+      return users
+        .add({
+          'full_name': fullName,
+          'email': email, 
+          'mobile': mobile ,
+          'gender': gender,
+          'profile_image': profileImage
+        })
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
+      }catch(e){
+        print(e);
+      }
+
+    }
+
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +165,7 @@ var imagePath;
                 ),
                 SizedBox(height: 102,),
                 CustomTextField(
+                  controller: nameController,
                   hintText: "Name",
                 ),
                 SizedBox(height: 12,),
@@ -131,6 +182,7 @@ var imagePath;
                 ),
                 SizedBox(height: 12,),
                 CustomTextField(
+                  controller: mobileController,
                   hintText: "Enter Mobile Number",
                 ),
                SizedBox(height: 14,),
