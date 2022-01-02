@@ -1,14 +1,43 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:test_me/screens/add_user.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({ Key? key }) : super(key: key);
+class UserListScreen extends StatefulWidget {  
+  static const String path = "/UserListScreen";
+  const UserListScreen({ Key? key }) : super(key: key);
+
+  @override
+  _UserListScreenState createState() => _UserListScreenState();
+}
+
+class _UserListScreenState extends State<UserListScreen> {
+  List _users = [];
+
+  Future getUsers()async{
+   CollectionReference  instance =  FirebaseFirestore.instance.collection('users');
+    instance.get().then((QuerySnapshot querySnapshot) {
+        setState(() {
+          _users = querySnapshot.docs;
+        });
+    });
+  }
+  int countTotalUser(List users){
+    return users.length;
+  }
+
+  @override
+  void initState() {
+    getUsers();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         backgroundColor: AppColor.primaryColor,
         centerTitle: true,
         title: Text(
@@ -40,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "36",
+                      "${countTotalUser(_users)}",
                       style: TextStyle(
                         fontSize: 14, 
                         fontWeight: FontWeight.w500,
@@ -58,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 label: Text('Add new User'),
                 onPressed: () {
-                  print('Button Pressed');
+                  Navigator.pushNamed(context, AddUserScreen.path);
                 },
                 style: ElevatedButton.styleFrom(
                   primary: AppColor.secondaryColor,
@@ -81,15 +110,15 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: 15,
+                itemCount: _users.length,
                 itemBuilder: (context, index){
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 18,
-                      backgroundImage: AssetImage("assets/image/profile.jpg"),
+                      backgroundImage: NetworkImage("${_users[index]["profile_image"]}")
                     ),
                     title: Text(
-                      "Name",
+                      "${_users[index]["full_name"]}",
                       style: TextStyle(
                         fontSize: 17, 
                         fontWeight: FontWeight.w400,
@@ -97,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     subtitle:  Text(
-                      "Email",
+                      "${_users[index]["email"]}",
                       style: TextStyle(
                         fontSize: 13, 
                         fontWeight: FontWeight.w400,
@@ -168,42 +197,6 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: Container(                                             
-        decoration: BoxDecoration(                                            
-          borderRadius: BorderRadius.only(                                           
-            topRight: Radius.circular(30), 
-            topLeft: Radius.circular(30),
-          ),            
-          boxShadow: [                                                               
-            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),       
-          ],                                                                         
-        ),                                                                           
-        child: ClipRRect(                                                            
-          borderRadius: BorderRadius.only(                                           
-          topLeft: Radius.circular(30.0),                                            
-          topRight: Radius.circular(30.0),                                           
-          ),                                                                         
-          child: BottomNavigationBar( 
-            backgroundColor:  AppColor.secondaryColor,    
-            selectedItemColor: AppColor.primaryColor,  
-            unselectedItemColor: AppColor.primaryColor,                                         
-            items: [                                        
-              BottomNavigationBarItem(                                               
-                icon: Icon(Icons.exit_to_app), 
-                label: "Exit".toUpperCase()
-              ), 
-               BottomNavigationBarItem(                                               
-                icon: Icon(Icons.person), 
-                label: "User".toUpperCase()
-              ),            
-              BottomNavigationBarItem(                                               
-                icon: Icon(Icons.person), 
-                label: "Profile".toUpperCase()
-              )                
-            ],                                                                       
-          ),                                                                         
-        )                                                                            
-      )
     );
   }
 }

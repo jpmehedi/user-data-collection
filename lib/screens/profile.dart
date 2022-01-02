@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_me/utils/app_color.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatelessWidget {  
+  static const String path = "/ProfileScreen";
   const ProfileScreen({ Key? key }) : super(key: key);
 
   @override

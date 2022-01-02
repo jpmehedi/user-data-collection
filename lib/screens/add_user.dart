@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_button.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
 enum Gender { Male, Female }  
 class AddUserScreen extends StatefulWidget {
+    static const String path = "/AddUserScreen";
   const AddUserScreen({ Key? key }) : super(key: key);
 
   @override
@@ -11,7 +17,73 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
-  Gender? _gender = Gender.Male; 
+    Gender? _gender = Gender.Male; 
+  var imagePath;
+  var imageUrl;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+
+  bool isLoading = false;
+
+  Future pickedImage()async{
+    final ImagePicker _picker = ImagePicker();
+      final XFile? image = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+      if(image != null){
+        setState(() {
+          imagePath = File(image.path);
+        });
+        uploadProfileImage();
+      }
+    }
+
+    Future uploadProfileImage() async {
+      String image = imagePath.toString();
+      var _image = image.split("/")[6];
+      
+      Reference reference = FirebaseStorage.instance.ref()
+          .child('profileImage/${_image}');
+      UploadTask uploadTask = reference.putFile(imagePath);
+
+      TaskSnapshot snapshot = await uploadTask;
+      imageUrl = await snapshot.ref.getDownloadURL();
+
+    }
+
+   Future createProfile(fullName, email, mobile, gender,profileImage )async{
+    setState(() {
+      isLoading = true;
+    });
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    try{
+      return users
+        .add({
+          'full_name': fullName,
+          'email': email, 
+          'mobile': mobile ,
+          'gender': gender,
+          'profile_image': profileImage
+        })
+          .then((value) => Navigator.pop(context))
+          .catchError((error) => print("Failed to add user: $error"));
+      }catch(e){
+        print(e);
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+
+    }
+
+
+
+
+
+
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +111,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 Center(
                   child: Stack(
                     children: [
-                      CircleAvatar(
+                     imagePath != null ? CircleAvatar(
                         radius: 36,
-                        backgroundImage: AssetImage("assets/image/profile.jpg"),
+                        backgroundImage :  FileImage(imagePath) 
+                      ) : CircleAvatar(
+                        radius: 36,
+                        backgroundImage :  AssetImage("assets/image/profile.jpg")  
                       ),
                       Transform.translate(
                         offset: Offset(
                           -20, 45
                         ),
                         child: ElevatedButton(
-                           onPressed: () {},
+                           onPressed: () {
+                             pickedImage();
+                           },
                           child: Icon(
                             Icons.camera_alt,
                             color: Colors.white,
@@ -64,20 +141,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 ),
                 SizedBox(height: 102,),
                 CustomTextField(
+                  controller: nameController,
                   hintText: "Name",
                 ),
                 SizedBox(height: 12,),
                 CustomTextField(
+                  controller: emailController,
                   hintText: "Email",
                 ),
                SizedBox(height: 12,),
                 CustomTextField(
+                  controller: passwordController,
                   obscureText: true,
                   hintText: "Password",
                   suffixIcon: Icon(Icons.visibility),
                 ),
                 SizedBox(height: 12,),
                 CustomTextField(
+                  controller: mobileController,
                   hintText: "Enter Mobile Number",
                 ),
                SizedBox(height: 14,),
@@ -138,8 +219,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   ],
                 ),
                 SizedBox(height: 32,),
-                 CustomButton(
-                  onTap: (){},
+                isLoading ? Center(child:  CircularProgressIndicator(),) :  CustomButton(
+                  onTap: (){
+                     createProfile(
+                      nameController.text,
+                      emailController.text,
+                      mobileController.text,
+                      _gender!.index.toString(),
+                      imageUrl.toString()
+                    );
+                  },
                   color: AppColor.secondaryColor,
                   levelColor: AppColor.primaryColor,
                   buttonLevel: "Save",
