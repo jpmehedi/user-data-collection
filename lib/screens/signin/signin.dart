@@ -1,18 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:test_me/screens/home.dart';
+import 'package:test_me/screens/basenav_layout.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_back_button.dart';
 import 'package:test_me/widgets/custom_button.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({ Key? key }) : super(key: key);
+class SignInScreen extends StatefulWidget {
+  static const String path = "/SignInScreen";
+  const SignInScreen({ Key? key }) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   bool isLoading = false;
   
   TextEditingController emailController = TextEditingController();
@@ -28,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text
       );
       if(userCredential.user != null){
-        Route route = MaterialPageRoute(builder: (ctx)=> HomeScreen());
+        Route route = MaterialPageRoute(builder: (ctx)=> BaseNavLayout());
         Navigator.push(context, route);
       }
     }catch(e){
@@ -38,6 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = false;
     });
   }
+
+
 
 
 

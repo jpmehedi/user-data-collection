@@ -6,13 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:test_me/screens/home.dart';
+import 'package:test_me/screens/basenav_layout.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_back_button.dart';
 import 'package:test_me/widgets/custom_button.dart';
 import 'package:test_me/widgets/custom_textfield.dart';
 enum Gender { Male, Female }  
 class SignUpScreen extends StatefulWidget {
+   static const String path = "/SignUpScreen";
   const SignUpScreen({ Key? key }) : super(key: key);
 
   @override
@@ -47,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           _gender!.index.toString(),
           imageUrl.toString()
         );
-        Route route = MaterialPageRoute(builder: (ctx)=> HomeScreen());
+        Route route = MaterialPageRoute(builder: (ctx)=> BaseNavLayout());
         Navigator.push(context, route);
       }
     }catch(e){

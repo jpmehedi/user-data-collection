@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:test_me/screens/welcome/login.dart';
-import 'package:test_me/screens/welcome/signup.dart';
+import 'package:test_me/screens/signin/signin.dart';
+import 'package:test_me/screens/signup/signup.dart';
 import 'package:test_me/utils/app_color.dart';
 import 'package:test_me/widgets/custom_button.dart';
 class WelcomeScreen extends StatelessWidget {
+  static const String path = "/WelcomeScreen";
   const WelcomeScreen({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(32),
@@ -50,8 +52,7 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(height: 43,),
               CustomButton(
                 onTap: (){
-                  Route route = MaterialPageRoute(builder: (context)=> LoginScreen());
-                  Navigator.push(context, route);
+                  Navigator.pushNamed(context, SignInScreen.path);
                 },
                 buttonLevel: "Login",
                 color: AppColor.secondaryColor,
@@ -60,8 +61,7 @@ class WelcomeScreen extends StatelessWidget {
               SizedBox(height: 13,),
               CustomButton(
                 onTap: (){
-                  Route route = MaterialPageRoute(builder: (context)=> SignUpScreen());
-                  Navigator.push(context, route);
+                  Navigator.pushNamed(context, SignUpScreen.path);
                 },
                 buttonLevel: "Sign up",
                 color: AppColor.primaryColor,
